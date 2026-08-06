@@ -1,0 +1,6741 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TeleMed Norte</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+
+body{
+
+    background:#eef6ff;
+
+    min-height:100vh;
+
+}
+
+
+
+#login{
+
+    height:100vh;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:linear-gradient(
+    135deg,
+    #0066ff,
+    #00c6ff
+    );
+
+}
+
+
+
+.login-box{
+
+    background:white;
+
+    width:380px;
+
+    padding:35px;
+
+    border-radius:25px;
+
+    text-align:center;
+
+    box-shadow:
+    0 15px 40px rgba(0,0,0,.25);
+
+}
+
+
+
+.logo{
+
+    font-size:60px;
+
+}
+
+
+
+h1{
+
+    color:#0066ff;
+
+    margin:15px 0;
+
+}
+
+
+
+p{
+
+    color:#666;
+
+}
+
+
+
+input{
+
+    width:100%;
+
+    padding:14px;
+
+    margin-top:15px;
+
+    border-radius:12px;
+
+    border:1px solid #ccc;
+
+    font-size:16px;
+
+}
+
+
+
+label{
+
+    display:block;
+
+    margin-top:15px;
+
+    font-weight:bold;
+
+    color:#444;
+
+    font-size:14px;
+
+}
+
+
+
+button{
+
+    width:100%;
+
+    padding:14px;
+
+    margin-top:15px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#0066ff;
+
+    color:white;
+
+    font-size:17px;
+
+    cursor:pointer;
+
+}
+
+
+
+button:hover{
+
+    background:#004ecc;
+
+}
+
+
+
+.demo{
+
+    margin-top:25px;
+
+    padding:15px;
+
+    background:#f1f7ff;
+
+    border-radius:15px;
+
+    text-align:left;
+
+    font-size:14px;
+
+}
+
+
+
+#sistema{
+
+    display:none;
+
+}
+
+
+
+</style>
+
+</head>
+
+
+
+<body>
+
+
+
+<div id="login">
+
+
+<div class="login-box">
+
+
+<div class="logo">
+
+🩺
+
+</div>
+
+
+<h1>
+
+TeleMed Norte
+
+</h1>
+
+
+<p>
+
+Sistema de Telemedicina
+
+</p>
+
+
+
+<input 
+id="usuario"
+placeholder="Usuário">
+
+
+
+<input 
+id="senha"
+type="password"
+placeholder="Senha">
+
+
+
+<button onclick="entrar()">
+
+Entrar
+
+</button>
+
+
+<button onclick="menuDemonstracao()"
+style="background:#00c6ff">
+
+🎤 Modo Apresentação
+
+</button>
+
+
+
+<div class="demo">
+
+
+<b>Usuários de teste:</b>
+
+<br><br>
+
+
+Paciente
+
+<br>
+
+Usuário: paciente
+
+<br>
+
+Senha: 123
+
+
+<br><br>
+
+
+Médico
+
+<br>
+
+Usuário: medico
+
+<br>
+
+Senha: 123
+
+
+<br><br>
+
+
+Motorista
+
+<br>
+
+Usuário: motorista
+
+<br>
+
+Senha: 123
+
+
+<br><br>
+
+
+Administrador
+
+<br>
+
+Usuário: admin
+
+<br>
+
+Senha: admin
+
+
+</div>
+
+
+
+</div>
+
+
+</div>
+
+
+
+<div id="sistema">
+
+
+</div>
+
+
+
+
+<script>
+
+
+// =====================
+// BANCO DE DADOS
+// =====================
+
+
+let dados = {
+
+
+consultas:[],
+
+
+exames:[],
+
+
+transportes:[],
+
+
+pacientes:[]
+
+
+};
+
+
+
+
+
+function salvarDados(){
+
+
+localStorage.setItem(
+"telemed",
+JSON.stringify(dados)
+);
+
+
+}
+
+
+
+
+
+function carregarDados(){
+
+
+let salvo =
+localStorage.getItem("telemed");
+
+
+
+if(salvo){
+
+
+dados =
+JSON.parse(salvo);
+
+
+}
+
+
+if(!dados.pacientes){
+
+dados.pacientes = [];
+
+}
+
+
+}
+
+
+
+carregarDados();
+
+
+
+
+
+
+
+// =====================
+// LOGIN
+// =====================
+
+
+
+function entrar(){
+
+
+let usuario =
+document.getElementById("usuario").value;
+
+
+
+let senha =
+document.getElementById("senha").value;
+
+
+
+
+let encontrado =
+usuarios.find(u =>
+u.usuario==usuario && u.senha==senha
+);
+
+
+
+if(!encontrado){
+
+
+alert("Usuário ou senha incorretos");
+
+
+return;
+
+
+}
+
+
+
+if(encontrado.tipo=="paciente"){
+
+abrirPaciente();
+
+}
+
+else if(encontrado.tipo=="medico"){
+
+abrirMedico();
+
+}
+
+else if(encontrado.tipo=="motorista"){
+
+abrirMotorista();
+
+}
+
+else if(encontrado.tipo=="admin"){
+
+abrirAdmin();
+
+}
+
+else{
+
+alert("Tipo de usuário desconhecido: "+encontrado.tipo);
+
+}
+
+
+
+}
+
+// =====================
+// ÁREA DO PACIENTE
+// =====================
+
+
+function abrirPaciente(){
+
+
+document.getElementById("login").style.display="none";
+
+document.getElementById("sistema").style.display="block";
+
+
+
+document.getElementById("sistema").innerHTML = `
+
+
+<div style="padding:25px">
+
+
+<h1>
+👤 Área do Paciente
+</h1>
+
+
+<p>
+Bem-vindo ao TeleMed Norte
+</p>
+
+
+
+<hr><br>
+
+
+
+<button onclick="marcarConsulta()">
+
+📅 Marcar Consulta
+
+</button>
+
+
+
+<button onclick="marcarExame()">
+
+🧪 Marcar Exame
+
+</button>
+
+
+
+<button onclick="chamarTransporte()">
+
+🚐 Chamar Transporte
+
+</button>
+
+
+
+<button onclick="verMeusDados()">
+
+📋 Meus Registros
+
+</button>
+
+
+
+<button onclick="perfilPaciente()">
+
+👤 Meu Perfil
+
+</button>
+
+
+
+<button onclick="sairSistema()"
+style="background:#ff4757">
+
+Sair
+
+</button>
+
+
+
+<div id="conteudoPaciente"
+style="margin-top:25px">
+
+
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+">
+
+
+<h2>
+Resumo
+</h2>
+
+
+<p>
+Consultas:
+${dados.consultas.length}
+</p>
+
+
+<p>
+Exames:
+${dados.exames.length}
+</p>
+
+
+<p>
+Transportes:
+${dados.transportes.length}
+</p>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+`;
+
+
+
+}
+
+
+
+
+function marcarConsulta(){
+
+
+
+document.getElementById("conteudoPaciente").innerHTML=`
+
+
+
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+">
+
+
+<h2>
+📅 Nova Consulta
+</h2>
+
+
+
+<input id="nomeConsulta"
+placeholder="Nome do paciente">
+
+
+
+<input id="medicoConsulta"
+placeholder="Nome do médico">
+
+
+
+<label>Data da consulta</label>
+<input id="dataConsulta"
+type="date">
+
+
+
+<label>Hora da consulta</label>
+<input id="horaConsulta"
+type="time">
+
+
+
+<button onclick="salvarConsulta()">
+
+Salvar Consulta
+
+</button>
+
+
+
+</div>
+
+
+
+`;
+
+
+
+}
+
+
+
+
+
+function salvarConsulta(){
+
+
+
+let paciente = document.getElementById("nomeConsulta").value;
+let medico = document.getElementById("medicoConsulta").value;
+let data = document.getElementById("dataConsulta").value;
+let hora = document.getElementById("horaConsulta").value;
+
+
+if(!paciente || !medico || !data || !hora){
+
+alert("Preencha todos os campos antes de salvar.");
+
+return;
+
+}
+
+
+
+let consulta={
+
+
+paciente:
+paciente,
+
+
+medico:
+medico,
+
+
+data:
+data,
+
+
+hora:
+hora,
+
+
+status:
+"Agendada"
+
+
+};
+
+
+
+dados.consultas.push(consulta);
+
+
+salvarDados();
+
+
+
+alert("Consulta marcada!");
+
+
+abrirPaciente();
+
+
+
+}
+
+
+
+
+
+function marcarExame(){
+
+
+
+document.getElementById("conteudoPaciente").innerHTML=`
+
+
+
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+">
+
+
+<h2>
+🧪 Novo Exame
+</h2>
+
+
+
+<input id="nomeExame"
+placeholder="Nome do paciente">
+
+
+
+<input id="tipoExame"
+placeholder="Tipo de exame">
+
+
+
+<label>Data do exame</label>
+<input id="dataExame"
+type="date">
+
+
+
+<button onclick="salvarExame()">
+
+Salvar Exame
+
+</button>
+
+
+
+</div>
+
+
+`;
+
+
+
+}
+
+
+
+
+
+
+function salvarExame(){
+
+
+
+let exame={
+
+
+paciente:
+document.getElementById("nomeExame").value,
+
+
+tipo:
+document.getElementById("tipoExame").value,
+
+
+data:
+document.getElementById("dataExame").value
+
+
+};
+
+
+
+dados.exames.push(exame);
+
+
+salvarDados();
+
+
+
+alert("Exame marcado!");
+
+
+abrirPaciente();
+
+
+}
+
+
+
+
+
+
+
+function chamarTransporte(){
+
+
+
+document.getElementById("conteudoPaciente").innerHTML=`
+
+
+
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+">
+
+
+<h2>
+🚐 Solicitar Transporte
+</h2>
+
+
+
+<input id="nomeTransporte"
+placeholder="Paciente">
+
+
+
+<input id="enderecoTransporte"
+placeholder="Endereço">
+
+
+
+<input id="destinoTransporte"
+placeholder="Destino">
+
+
+
+<button onclick="salvarTransporte()">
+
+Solicitar
+
+</button>
+
+
+
+</div>
+
+
+`;
+
+
+
+}
+
+
+
+
+
+
+
+function salvarTransporte(){
+
+
+
+let transporte={
+
+
+paciente:
+document.getElementById("nomeTransporte").value,
+
+
+endereco:
+document.getElementById("enderecoTransporte").value,
+
+
+destino:
+document.getElementById("destinoTransporte").value,
+
+
+status:
+"Aguardando motorista"
+
+
+};
+
+
+
+dados.transportes.push(transporte);
+
+
+salvarDados();
+
+
+
+alert("Transporte solicitado!");
+
+
+abrirPaciente();
+
+
+
+}
+
+
+// =====================
+// MEUS REGISTROS (PACIENTE)
+// =====================
+
+
+function verMeusDados(){
+
+
+let html = `
+
+
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+">
+
+
+<h2>
+📋 Meus Registros
+</h2>
+
+
+<h3 style="margin-top:15px">📅 Consultas</h3>
+
+`;
+
+
+if(dados.consultas.length==0){
+
+html += `<p>Nenhuma consulta registrada.</p>`;
+
+}
+
+
+dados.consultas.forEach((c,index)=>{
+
+let statusC = c.status || "Agendada";
+
+html += `
+
+<div style="
+background:#eef6ff;
+padding:12px;
+border-radius:10px;
+margin:8px 0;
+">
+
+<b>Médico:</b> ${c.medico || "-"} ${c.especialidade ? "("+c.especialidade+")" : ""}<br>
+<b>Data:</b> ${c.data} &nbsp; <b>Hora:</b> ${c.hora}<br>
+<b>Status:</b> ${statusC}
+
+${statusC!="Cancelada" && statusC!="Realizada" ? `
+<br><br>
+<button onclick="cancelarConsultaPaciente(${index})"
+style="background:#ff6b6b">
+🚫 Cancelar Consulta
+</button>
+` : ""}
+
+</div>
+
+`;
+
+});
+
+
+html += `<h3 style="margin-top:15px">🧪 Exames</h3>`;
+
+
+if(dados.exames.length==0){
+
+html += `<p>Nenhum exame registrado.</p>`;
+
+}
+
+
+dados.exames.forEach((e,index)=>{
+
+let statusE = e.status || "Solicitado";
+
+html += `
+
+<div style="
+background:#eef6ff;
+padding:12px;
+border-radius:10px;
+margin:8px 0;
+">
+
+<b>Tipo:</b> ${e.tipo}<br>
+<b>Data:</b> ${e.data}<br>
+<b>Status:</b> ${statusE}
+
+${statusE!="Cancelado" && statusE!="Concluído" ? `
+<br><br>
+<button onclick="cancelarExamePaciente(${index})"
+style="background:#ff6b6b">
+🚫 Cancelar Exame
+</button>
+` : ""}
+
+</div>
+
+`;
+
+});
+
+
+html += `<h3 style="margin-top:15px">🚐 Transportes</h3>`;
+
+
+if(dados.transportes.length==0){
+
+html += `<p>Nenhum transporte solicitado.</p>`;
+
+}
+
+
+dados.transportes.forEach((t,index)=>{
+
+let statusT = t.status || "Aguardando motorista";
+
+html += `
+
+<div style="
+background:#eef6ff;
+padding:12px;
+border-radius:10px;
+margin:8px 0;
+">
+
+<b>Endereço:</b> ${t.endereco}<br>
+<b>Destino:</b> ${t.destino}<br>
+<b>Status:</b> ${statusT}
+
+${statusT!="Cancelado" && statusT!="Finalizado" ? `
+<br><br>
+<button onclick="cancelarTransportePaciente(${index})"
+style="background:#ff6b6b">
+🚫 Cancelar Transporte
+</button>
+` : ""}
+
+</div>
+
+`;
+
+});
+
+
+html += `
+
+<br>
+
+<button onclick="abrirPaciente()"
+style="background:#999">
+
+⬅ Voltar
+
+</button>
+
+</div>
+
+`;
+
+
+document.getElementById("conteudoPaciente").innerHTML = html;
+
+
+}
+
+
+function cancelarConsultaPaciente(index){
+
+if(!confirm("Deseja realmente cancelar esta consulta?")){
+return;
+}
+
+dados.consultas[index].status = "Cancelada";
+
+salvarDados();
+
+verMeusDados();
+
+}
+
+
+function cancelarExamePaciente(index){
+
+if(!confirm("Deseja realmente cancelar este exame?")){
+return;
+}
+
+dados.exames[index].status = "Cancelado";
+
+salvarDados();
+
+verMeusDados();
+
+}
+
+
+function cancelarTransportePaciente(index){
+
+if(!confirm("Deseja realmente cancelar este transporte?")){
+return;
+}
+
+dados.transportes[index].status = "Cancelado";
+
+salvarDados();
+
+verMeusDados();
+
+}
+
+
+// =====================
+// ÁREA DO MÉDICO
+// =====================
+
+
+function abrirMedico(){
+
+
+document.getElementById("login").style.display="none";
+
+document.getElementById("sistema").style.display="block";
+
+
+
+document.getElementById("sistema").innerHTML=`
+
+
+<div style="padding:25px">
+
+
+<h1>
+👨‍⚕️ Área do Médico
+</h1>
+
+
+<p>
+Painel de atendimento médico
+</p>
+
+
+
+<hr><br>
+
+
+
+<button onclick="novaConsultaMedico()">
+
+📅 Marcar Consulta
+
+</button>
+
+
+
+<button onclick="novoExameMedico()">
+
+🧪 Solicitar Exame
+
+</button>
+
+
+
+<button onclick="verAgendaMedico()">
+
+📋 Ver Agenda
+
+</button>
+
+
+
+<button onclick="sairSistema()"
+style="background:#ff4757">
+
+Sair
+
+</button>
+
+
+
+
+<div id="conteudoMedico"
+style="margin-top:25px">
+
+
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+">
+
+
+<h2>
+Resumo
+</h2>
+
+
+<p>
+Consultas:
+${dados.consultas.length}
+</p>
+
+
+<p>
+Exames:
+${dados.exames.length}
+</p>
+
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+`;
+
+
+
+
+adicionarMenuMedico();
+
+
+}
+
+
+
+
+
+
+
+
+function novaConsultaMedico(){
+
+
+
+document.getElementById("conteudoMedico").innerHTML=`
+
+
+
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+">
+
+
+<h2>
+📅 Agendar Consulta
+</h2>
+
+
+
+<input id="medPaciente"
+placeholder="Nome do paciente">
+
+
+
+<input id="medEspecialidade"
+placeholder="Especialidade">
+
+
+
+<label>Data da consulta</label>
+<input id="medData"
+type="date">
+
+
+
+<label>Hora da consulta</label>
+<input id="medHora"
+type="time">
+
+
+
+<button onclick="salvarConsultaMedico()">
+
+Confirmar Consulta
+
+</button>
+
+
+
+</div>
+
+
+`;
+
+
+
+}
+
+
+
+
+
+
+function salvarConsultaMedico(){
+
+
+let paciente = document.getElementById("medPaciente").value;
+let especialidade = document.getElementById("medEspecialidade").value;
+let data = document.getElementById("medData").value;
+let hora = document.getElementById("medHora").value;
+
+
+if(!paciente || !data || !hora){
+
+alert("Preencha nome do paciente, data e hora.");
+
+return;
+
+}
+
+
+let consulta={
+
+
+paciente:
+paciente,
+
+
+medico:
+"Dr. Carlos",
+
+
+especialidade:
+especialidade,
+
+
+data:
+data,
+
+
+hora:
+hora,
+
+
+status:
+"Confirmada"
+
+
+};
+
+
+
+dados.consultas.push(consulta);
+
+
+salvarDados();
+
+
+
+alert("Consulta adicionada na agenda!");
+
+
+abrirMedico();
+
+
+
+}
+
+
+
+
+
+
+
+
+
+function novoExameMedico(){
+
+
+
+document.getElementById("conteudoMedico").innerHTML=`
+
+
+
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+">
+
+
+<h2>
+🧪 Solicitar Exame
+</h2>
+
+
+
+<input id="medExPaciente"
+placeholder="Nome do paciente">
+
+
+
+<input id="medTipoExame"
+placeholder="Tipo de exame">
+
+
+
+<label>Data do exame</label>
+<input id="medDataExame"
+type="date">
+
+
+
+<button onclick="salvarExameMedico()">
+
+Solicitar Exame
+
+</button>
+
+
+
+</div>
+
+
+
+`;
+
+
+
+}
+
+
+
+
+
+
+
+
+function salvarExameMedico(){
+
+
+
+let exame={
+
+
+paciente:
+document.getElementById("medExPaciente").value,
+
+
+tipo:
+document.getElementById("medTipoExame").value,
+
+
+data:
+document.getElementById("medDataExame").value,
+
+
+status:
+"Solicitado pelo médico"
+
+
+};
+
+
+
+dados.exames.push(exame);
+
+
+salvarDados();
+
+
+
+alert("Exame solicitado!");
+
+
+abrirMedico();
+
+
+
+}
+
+
+
+
+
+
+
+function verAgendaMedico(){
+
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+">
+
+
+<h2>
+📋 Agenda
+</h2>
+
+
+<input id="buscaAgendaMedico"
+placeholder="🔎 Buscar paciente..."
+oninput="filtrarAgendaMedico()"
+style="margin-bottom:15px">
+
+
+`;
+
+
+
+if(dados.consultas.length==0){
+
+
+html+=`
+
+<p>
+Nenhuma consulta marcada.
+</p>
+
+`;
+
+
+
+}
+
+
+
+dados.consultas.forEach((c,index)=>{
+
+
+let status = c.status || "Agendada";
+
+let corStatus = "#3742fa";
+
+if(status=="Realizada"){ corStatus="#2ed573"; }
+if(status=="Cancelada"){ corStatus="#ff4757"; }
+
+
+html+=`
+
+
+<div class="cardConsulta"
+data-paciente="${c.paciente.toLowerCase()}"
+style="
+background:#eef6ff;
+padding:15px;
+border-radius:10px;
+margin:10px 0;
+">
+
+
+<b>Paciente:</b>
+${c.paciente}
+
+
+<br>
+
+
+<b>Especialidade:</b>
+${c.especialidade || "Consulta"}
+
+
+<br>
+
+
+<b>Data:</b>
+${c.data}
+
+
+<br>
+
+
+<b>Hora:</b>
+${c.hora}
+
+
+<br><br>
+
+
+<span style="
+background:${corStatus};
+color:white;
+padding:5px 12px;
+border-radius:12px;
+font-size:13px;
+">
+${status}
+</span>
+
+
+<br><br>
+
+
+<button onclick="editarConsulta(${index})"
+style="background:#ffa502">
+
+✏️ Editar
+
+</button>
+
+
+<button onclick="iniciarVideochamada(${index},'medico')"
+style="background:#2ed573">
+
+📹 Iniciar Videochamada
+
+</button>
+
+
+<button onclick="definirStatusConsulta(${index},'Realizada')"
+style="background:#7bed9f;color:#222">
+
+✅ Realizada
+
+</button>
+
+
+<button onclick="definirStatusConsulta(${index},'Cancelada')"
+style="background:#ffa07a;color:#222">
+
+🚫 Cancelar
+
+</button>
+
+
+<button onclick="excluirConsulta(${index})"
+style="background:#ff4757">
+
+🗑️ Excluir
+
+</button>
+
+
+<button onclick="verDetalhesConsulta(${index})"
+style="background:#54a0ff">
+
+🔎 Ver Detalhes
+
+</button>
+
+
+<button onclick="adicionarDetalhesConsulta(${index})"
+style="background:#a29bfe">
+
+📝 Adicionar Observação
+
+</button>
+
+
+
+</div>
+
+
+`;
+
+
+
+});
+
+
+
+html+=`</div>`;
+
+
+document.getElementById("conteudoMedico").innerHTML=html;
+
+
+
+}
+
+
+function filtrarAgendaMedico(){
+
+
+let termo =
+document.getElementById("buscaAgendaMedico").value.toLowerCase();
+
+
+let cards =
+document.querySelectorAll(".cardConsulta");
+
+
+cards.forEach(card=>{
+
+
+let paciente = card.getAttribute("data-paciente");
+
+
+if(paciente.includes(termo)){
+
+card.style.display="block";
+
+}else{
+
+card.style.display="none";
+
+}
+
+
+});
+
+
+}
+
+
+
+
+function excluirConsulta(index){
+
+
+if(!confirm("Deseja realmente excluir esta consulta?")){
+
+return;
+
+}
+
+
+dados.consultas.splice(index,1);
+
+
+salvarDados();
+
+
+verAgendaMedico();
+
+
+}
+
+
+// =====================
+// EDITAR CONSULTA
+// =====================
+
+
+function editarConsulta(index){
+
+
+let c = dados.consultas[index];
+
+
+document.getElementById("conteudoMedico").innerHTML = `
+
+
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+">
+
+
+<h2>
+✏️ Editar Consulta
+</h2>
+
+
+<input id="editPaciente"
+placeholder="Nome do paciente"
+value="${c.paciente}">
+
+
+<input id="editEspecialidade"
+placeholder="Especialidade"
+value="${c.especialidade || ""}">
+
+
+<label>Data da consulta</label>
+<input id="editData"
+type="date"
+value="${c.data}">
+
+
+<label>Hora da consulta</label>
+<input id="editHora"
+type="time"
+value="${c.hora}">
+
+
+<button onclick="salvarEdicaoConsulta(${index})">
+
+💾 Salvar Alterações
+
+</button>
+
+
+<button onclick="verAgendaMedico()"
+style="background:#999">
+
+Cancelar
+
+</button>
+
+
+</div>
+
+
+`;
+
+
+}
+
+
+
+
+function salvarEdicaoConsulta(index){
+
+
+let paciente = document.getElementById("editPaciente").value;
+let especialidade = document.getElementById("editEspecialidade").value;
+let data = document.getElementById("editData").value;
+let hora = document.getElementById("editHora").value;
+
+
+if(!paciente || !data || !hora){
+
+alert("Preencha nome, data e hora.");
+
+return;
+
+}
+
+
+dados.consultas[index].paciente = paciente;
+dados.consultas[index].especialidade = especialidade;
+dados.consultas[index].data = data;
+dados.consultas[index].hora = hora;
+
+
+salvarDados();
+
+
+alert("Consulta atualizada!");
+
+
+verAgendaMedico();
+
+
+}
+
+
+// =====================
+// STATUS DA CONSULTA
+// =====================
+
+
+function definirStatusConsulta(index, status){
+
+
+dados.consultas[index].status = status;
+
+
+salvarDados();
+
+
+verAgendaMedico();
+
+
+}
+
+
+// =====================
+// VIDEOCHAMADA SIMULADA
+// =====================
+
+
+let segundosVideo = 0;
+
+let timerVideo = null;
+
+
+function iniciarVideochamada(index, origem){
+
+
+clearInterval(timerVideo);
+
+segundosVideo = 0;
+
+
+let c = dados.consultas[index];
+
+
+document.getElementById("sistema").innerHTML = `
+
+
+<div style="
+padding:25px;
+text-align:center;
+color:white;
+background:#111;
+min-height:100vh;
+">
+
+
+<h1>
+📹 Consulta em Andamento
+</h1>
+
+
+<p>
+Paciente: ${c.paciente} — ${c.especialidade || "Consulta"}
+</p>
+
+
+<div style="
+background:#222;
+height:280px;
+border-radius:20px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:90px;
+margin:25px auto;
+max-width:400px;
+">
+
+🧑‍⚕️
+
+</div>
+
+
+<div style="
+background:#0066ff;
+display:inline-block;
+padding:10px 25px;
+border-radius:20px;
+font-size:20px;
+">
+
+⏱️ <span id="tempoVideo">00:00</span>
+
+</div>
+
+
+<br><br><br>
+
+
+<button onclick="encerrarVideochamada('${origem}')"
+style="background:#ff4757;max-width:300px;">
+
+📴 Encerrar Consulta
+
+</button>
+
+
+</div>
+
+
+`;
+
+
+timerVideo = setInterval(()=>{
+
+
+segundosVideo++;
+
+
+let m = String(Math.floor(segundosVideo/60)).padStart(2,"0");
+
+let s = String(segundosVideo%60).padStart(2,"0");
+
+
+let el = document.getElementById("tempoVideo");
+
+
+if(el){
+
+el.innerText = m+":"+s;
+
+}
+
+
+},1000);
+
+
+}
+
+
+
+
+function encerrarVideochamada(origem){
+
+
+clearInterval(timerVideo);
+
+
+alert("Consulta encerrada!");
+
+
+document.getElementById("sistema").style.display="block";
+
+
+if(origem=="medico"){
+
+abrirMedico();
+
+}else{
+
+abrirPaciente();
+
+}
+
+
+}
+
+// =====================
+// ÁREA DO MOTORISTA
+// =====================
+
+
+function abrirMotorista(){
+
+
+document.getElementById("login").style.display="none";
+
+document.getElementById("sistema").style.display="block";
+
+
+
+document.getElementById("sistema").innerHTML=`
+
+
+<div style="padding:25px">
+
+
+<h1>
+🚐 Área do Motorista
+</h1>
+
+
+<p>
+Controle de transporte de pacientes
+</p>
+
+
+
+<hr><br>
+
+
+
+
+<button onclick="verTransportes()">
+
+🚐 Ver Solicitações
+
+</button>
+
+
+
+<button onclick="historicoTransportes()">
+
+📋 Histórico
+
+</button>
+
+
+
+
+<button onclick="painelMotoristaAvancado()">
+
+🚀 Painel Avançado
+
+</button>
+
+
+
+
+<button onclick="sairSistema()"
+style="background:#ff4757">
+
+Sair
+
+</button>
+
+
+
+
+<div id="conteudoMotorista"
+style="margin-top:25px">
+
+
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+">
+
+
+<h2>
+Resumo
+
+</h2>
+
+
+<p>
+
+Transportes solicitados:
+${dados.transportes.length}
+
+</p>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+`;
+
+
+
+}
+
+
+
+
+
+
+
+
+
+function verTransportes(){
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+">
+
+
+<h2>
+🚐 Solicitações
+</h2>
+
+
+
+`;
+
+
+
+if(dados.transportes.length==0){
+
+
+html+=`
+
+<p>
+Nenhum transporte solicitado.
+</p>
+
+`;
+
+
+
+}
+
+
+
+dados.transportes.forEach((t,index)=>{
+
+
+html+=`
+
+
+
+<div style="
+background:#eef6ff;
+padding:15px;
+border-radius:12px;
+margin:15px 0;
+">
+
+
+<b>Paciente:</b>
+${t.paciente}
+
+
+<br>
+
+
+<b>Endereço:</b>
+${t.endereco}
+
+
+<br>
+
+
+<b>Destino:</b>
+${t.destino}
+
+
+<br>
+
+
+<b>Status:</b>
+${t.status}
+
+
+<br><br>
+
+
+<button onclick="aceitarTransporte(${index})">
+
+Aceitar
+
+</button>
+
+
+
+<button onclick="finalizarTransporte(${index})">
+
+Finalizar
+
+</button>
+
+
+
+</div>
+
+
+
+`;
+
+
+
+});
+
+
+
+html+=`
+
+</div>
+
+`;
+
+
+
+document.getElementById("conteudoMotorista").innerHTML=html;
+
+
+
+}
+
+
+
+
+
+
+
+
+
+function aceitarTransporte(index){
+
+
+dados.transportes[index].status=
+"Em transporte";
+
+
+salvarDados();
+
+
+alert("Transporte iniciado!");
+
+
+verTransportes();
+
+
+
+}
+
+
+
+
+
+
+
+
+
+function finalizarTransporte(index){
+
+
+dados.transportes[index].status=
+"Concluído";
+
+
+salvarDados();
+
+
+alert("Transporte finalizado!");
+
+
+verTransportes();
+
+
+
+}
+
+
+
+
+
+
+
+
+function historicoTransportes(){
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+">
+
+
+<h2>
+📋 Histórico
+</h2>
+
+
+
+`;
+
+
+
+dados.transportes.forEach(t=>{
+
+
+html+=`
+
+
+<div style="
+background:#eef6ff;
+padding:15px;
+border-radius:12px;
+margin:10px 0;
+">
+
+
+<b>Paciente:</b>
+${t.paciente}
+
+
+<br>
+
+
+<b>Destino:</b>
+${t.destino}
+
+
+<br>
+
+
+<b>Status:</b>
+${t.status}
+
+
+
+</div>
+
+
+
+`;
+
+
+
+});
+
+
+
+html+=`
+
+</div>
+
+`;
+
+
+
+document.getElementById("conteudoMotorista").innerHTML=html;
+
+
+
+}
+
+// =====================
+// ÁREA DO ADMINISTRADOR
+// =====================
+
+
+function abrirAdmin(){
+
+
+document.getElementById("login").style.display="none";
+
+document.getElementById("sistema").style.display="block";
+
+
+
+document.getElementById("sistema").innerHTML=`
+
+
+<div style="padding:25px">
+
+
+<h1>
+📊 Administrador
+</h1>
+
+
+<p>
+Painel geral do sistema TeleMed Norte
+</p>
+
+
+
+<hr><br>
+
+
+
+
+<div style="
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+">
+
+
+
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+text-align:center;
+">
+
+
+<h2 style="color:#0066ff">
+
+${contarPacientes()}
+
+</h2>
+
+
+<p>
+
+Pacientes
+
+</p>
+
+
+</div>
+
+
+
+
+
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+text-align:center;
+">
+
+
+<h2 style="color:#0066ff">
+
+${dados.consultas.length}
+
+</h2>
+
+
+<p>
+
+Consultas
+
+</p>
+
+
+</div>
+
+
+
+
+
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+text-align:center;
+">
+
+
+<h2 style="color:#0066ff">
+
+${dados.exames.length}
+
+</h2>
+
+
+<p>
+
+Exames
+
+</p>
+
+
+</div>
+
+
+
+
+
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+text-align:center;
+">
+
+
+<h2 style="color:#0066ff">
+
+${dados.transportes.length}
+
+</h2>
+
+
+<p>
+
+Transportes
+
+</p>
+
+
+</div>
+
+
+
+</div>
+
+
+
+<br>
+
+
+
+
+<button onclick="mostrarRelatorio()">
+
+📋 Ver Relatório Completo
+
+</button>
+
+
+
+<button onclick="dashboardAdmin()">
+
+📊 Visão Geral
+
+</button>
+
+
+
+<button onclick="listaPacientes()">
+
+👥 Lista de Pacientes
+
+</button>
+
+
+
+<button onclick="cadastrarPacienteForm()">
+
+➕ Cadastrar Paciente
+
+</button>
+
+
+
+<button onclick="graficoAdmin()">
+
+📈 Gráficos
+
+</button>
+
+
+
+<button onclick="painelUsuariosAdmin()">
+
+🔑 Usuários
+
+</button>
+
+
+
+<button onclick="listarPrioridades()">
+
+📌 Prioridades
+
+</button>
+
+
+
+<button onclick="sairSistema()"
+style="background:#ff4757">
+
+Sair
+
+</button>
+
+
+
+<div id="conteudoAdmin"
+style="margin-top:25px">
+
+
+</div>
+
+
+
+</div>
+
+
+
+`;
+
+
+
+}
+
+
+
+
+
+
+
+
+function contarPacientes(){
+
+
+let pacientes=[];
+
+
+
+dados.consultas.forEach(c=>{
+
+
+if(
+c.paciente &&
+!pacientes.includes(c.paciente)
+){
+
+
+pacientes.push(c.paciente);
+
+
+}
+
+
+});
+
+
+
+dados.exames.forEach(e=>{
+
+
+if(
+e.paciente &&
+!pacientes.includes(e.paciente)
+){
+
+
+pacientes.push(e.paciente);
+
+
+}
+
+
+});
+
+
+
+dados.transportes.forEach(t=>{
+
+
+if(
+t.paciente &&
+!pacientes.includes(t.paciente)
+){
+
+
+pacientes.push(t.paciente);
+
+
+}
+
+
+});
+
+
+
+return pacientes.length;
+
+
+
+}
+
+
+
+
+
+
+
+
+
+function mostrarRelatorio(){
+
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+">
+
+
+<h2>
+📋 Relatório Geral
+</h2>
+
+
+
+<h3>
+📅 Consultas
+</h3>
+
+
+
+`;
+
+
+
+
+dados.consultas.forEach(c=>{
+
+
+html+=`
+
+
+<div style="
+background:#eef6ff;
+padding:15px;
+border-radius:10px;
+margin:10px 0;
+">
+
+
+Paciente:
+${c.paciente}
+
+
+<br>
+
+
+Médico:
+${c.medico}
+
+
+<br>
+
+
+Data:
+${c.data}
+
+
+<br>
+
+
+Hora:
+${c.hora}
+
+
+
+</div>
+
+
+
+`;
+
+
+
+});
+
+
+
+html+=`
+
+<h3>
+🧪 Exames
+</h3>
+
+`;
+
+
+
+dados.exames.forEach(e=>{
+
+
+html+=`
+
+
+<div style="
+background:#eef6ff;
+padding:15px;
+border-radius:10px;
+margin:10px 0;
+">
+
+
+Paciente:
+${e.paciente}
+
+
+<br>
+
+
+Exame:
+${e.tipo}
+
+
+<br>
+
+
+Data:
+${e.data}
+
+
+
+</div>
+
+
+
+`;
+
+
+
+});
+
+
+
+html+=`
+
+<h3>
+🚐 Transportes
+</h3>
+
+`;
+
+
+
+dados.transportes.forEach(t=>{
+
+
+html+=`
+
+
+<div style="
+background:#eef6ff;
+padding:15px;
+border-radius:10px;
+margin:10px 0;
+">
+
+
+Paciente:
+${t.paciente}
+
+
+<br>
+
+
+Destino:
+${t.destino}
+
+<br>
+
+Status:
+${t.status}
+
+
+<div>
+
+
+`;
+
+
+});
+
+
+html+=`
+
+</div>
+
+`;
+
+
+document.getElementById("conteudoAdmin").innerHTML=html;
+
+
+}
+
+// =====================
+// FINALIZAÇÃO DO SISTEMA
+// =====================
+
+
+// Função sair
+
+function sairSistema(){
+
+
+document.getElementById("sistema").style.display="none";
+
+
+document.getElementById("login").style.display="flex";
+
+
+
+document.getElementById("usuario").value="";
+
+
+document.getElementById("senha").value="";
+
+
+
+}
+
+
+
+
+
+
+
+
+// Animação simples nos botões
+
+document.addEventListener(
+"click",
+function(event){
+
+
+if(event.target.tagName=="BUTTON"){
+
+
+event.target.style.opacity="0.8";
+
+
+setTimeout(function(){
+
+
+event.target.style.opacity="1";
+
+
+},100);
+
+
+
+}
+
+
+});
+
+// =====================
+// MELHORIAS DE CONTROLE
+// =====================
+
+
+// Contagem de atendimentos
+
+function totalAtendimentos(){
+
+let total =
+dados.consultas.length +
+dados.exames.length +
+dados.transportes.length;
+
+
+return total;
+
+
+}
+
+
+
+// Pesquisar paciente
+
+function pesquisarPaciente(nome){
+
+
+let encontrados=[];
+
+
+
+dados.consultas.forEach(c=>{
+
+
+if(
+c.paciente &&
+c.paciente
+.toLowerCase()
+.includes(
+nome.toLowerCase()
+)
+){
+
+
+encontrados.push(c);
+
+
+}
+
+
+});
+
+
+
+dados.exames.forEach(e=>{
+
+
+if(
+e.paciente &&
+e.paciente
+.toLowerCase()
+.includes(
+nome.toLowerCase()
+)
+){
+
+
+encontrados.push(e);
+
+
+}
+
+
+});
+
+
+
+dados.transportes.forEach(t=>{
+
+
+if(
+t.paciente &&
+t.paciente
+.toLowerCase()
+.includes(
+nome.toLowerCase()
+)
+){
+
+
+encontrados.push(t);
+
+
+}
+
+
+});
+
+
+
+return encontrados;
+
+
+}
+
+
+
+
+
+// Atualizar status dos transportes
+
+function atualizarTransportes(){
+
+
+dados.transportes.forEach(t=>{
+
+
+if(!t.status){
+
+
+t.status="Aguardando motorista";
+
+
+}
+
+
+});
+
+
+
+salvarDados();
+
+
+}
+
+
+
+
+
+// Gerar resumo do sistema
+
+function resumoSistema(){
+
+
+return {
+
+consultas:
+dados.consultas.length,
+
+
+exames:
+dados.exames.length,
+
+
+transportes:
+dados.transportes.length,
+
+
+total:
+totalAtendimentos()
+
+
+};
+
+
+}
+
+
+
+atualizarTransportes();
+
+// =========================
+// DASHBOARD ADMINISTRADOR
+// =========================
+
+
+function dashboardAdmin(){
+
+
+let resumo = resumoSistema();
+
+
+
+let html = `
+
+
+<div style="
+background:white;
+padding:25px;
+border-radius:20px;
+margin-top:20px;
+">
+
+
+<h2>
+📊 Visão Geral
+</h2>
+
+
+
+<div style="
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+margin-top:20px;
+">
+
+
+
+<div style="
+background:#eef6ff;
+padding:20px;
+border-radius:15px;
+text-align:center;
+">
+
+<h1 style="color:#0066ff">
+
+${resumo.consultas}
+
+</h1>
+
+Consultas
+
+</div>
+
+
+
+
+
+<div style="
+background:#eef6ff;
+padding:20px;
+border-radius:15px;
+text-align:center;
+">
+
+<h1 style="color:#0066ff">
+
+${resumo.exames}
+
+</h1>
+
+Exames
+
+</div>
+
+
+
+
+
+<div style="
+background:#eef6ff;
+padding:20px;
+border-radius:15px;
+text-align:center;
+">
+
+<h1 style="color:#0066ff">
+
+${resumo.transportes}
+
+</h1>
+
+Transportes
+
+</div>
+
+
+
+
+
+<div style="
+background:#eef6ff;
+padding:20px;
+border-radius:15px;
+text-align:center;
+">
+
+<h1 style="color:#0066ff">
+
+${resumo.total}
+
+</h1>
+
+Atendimentos
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+`;
+
+
+
+let area =
+document.getElementById("conteudoAdmin");
+
+
+
+if(area){
+
+area.innerHTML = html;
+
+}
+
+
+
+}
+
+// =========================
+// LISTA DE PACIENTES
+// =========================
+
+
+function listaPacientes(){
+
+
+let nomesAtividade=[];
+
+
+
+dados.consultas.forEach(c=>{
+
+if(c.paciente && !nomesAtividade.includes(c.paciente)){
+
+nomesAtividade.push(c.paciente);
+
+}
+
+});
+
+
+dados.exames.forEach(e=>{
+
+if(e.paciente && !nomesAtividade.includes(e.paciente)){
+
+nomesAtividade.push(e.paciente);
+
+}
+
+});
+
+
+dados.transportes.forEach(t=>{
+
+if(t.paciente && !nomesAtividade.includes(t.paciente)){
+
+nomesAtividade.push(t.paciente);
+
+}
+
+});
+
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:25px;
+border-radius:20px;
+margin-top:20px;
+">
+
+
+<h2>
+👥 Pacientes Cadastrados
+</h2>
+
+
+<button onclick="cadastrarPacienteForm()">
+➕ Cadastrar Novo Paciente
+</button>
+
+
+<br><br>
+
+
+`;
+
+
+
+if(dados.pacientes.length==0){
+
+html+=`<p>Nenhum paciente cadastrado ainda.</p>`;
+
+}
+
+
+dados.pacientes.forEach((p,index)=>{
+
+html+=`
+
+<div style="
+background:#eef6ff;
+padding:15px;
+border-radius:12px;
+margin:10px 0;
+">
+
+<b>Nome:</b> ${p.nome}<br>
+<b>Idade:</b> ${p.idade || "-"}<br>
+<b>Telefone:</b> ${p.telefone || "-"}<br>
+<b>Endereço:</b> ${p.endereco || "-"}
+
+<br><br>
+
+<button onclick="excluirPaciente(${index})"
+style="background:#ff4757">
+🗑️ Excluir
+</button>
+
+</div>
+
+`;
+
+});
+
+
+
+html+=`
+
+
+<h3 style="margin-top:20px">
+📌 Nomes com atividade no sistema (sem cadastro formal)
+</h3>
+
+
+`;
+
+
+let semCadastro =
+nomesAtividade.filter(nome =>
+!dados.pacientes.some(p => p.nome.toLowerCase()==nome.toLowerCase())
+);
+
+
+if(semCadastro.length==0){
+
+html+=`<p>Todos os pacientes com atividade já têm cadastro.</p>`;
+
+}
+
+
+semCadastro.forEach(nome=>{
+
+html+=`
+
+<div style="
+background:#fff6e6;
+padding:12px;
+border-radius:10px;
+margin:8px 0;
+">
+
+${nome}
+
+</div>
+
+`;
+
+});
+
+
+
+html+=`
+
+</div>
+
+`;
+
+
+
+let area =
+document.getElementById("conteudoAdmin");
+
+
+
+if(area){
+
+area.innerHTML=html;
+
+}
+
+
+
+}
+
+
+function cadastrarPacienteForm(){
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:25px;
+border-radius:20px;
+margin-top:20px;
+">
+
+
+<h2>
+➕ Cadastrar Paciente
+</h2>
+
+
+<label>Nome completo</label>
+<input id="cadNomePaciente"
+placeholder="Nome completo">
+
+
+<label>Idade</label>
+<input id="cadIdadePaciente"
+type="number"
+placeholder="Idade">
+
+
+<label>Telefone</label>
+<input id="cadTelefonePaciente"
+placeholder="Telefone">
+
+
+<label>Endereço</label>
+<input id="cadEnderecoPaciente"
+placeholder="Endereço">
+
+
+<button onclick="salvarPaciente()">
+💾 Salvar Paciente
+</button>
+
+
+<button onclick="listaPacientes()"
+style="background:#999">
+Cancelar
+</button>
+
+
+</div>
+
+
+`;
+
+
+let area =
+document.getElementById("conteudoAdmin");
+
+
+if(area){
+
+area.innerHTML=html;
+
+}
+
+
+}
+
+
+function salvarPaciente(){
+
+
+let nome =
+document.getElementById("cadNomePaciente").value;
+
+
+let idade =
+document.getElementById("cadIdadePaciente").value;
+
+
+let telefone =
+document.getElementById("cadTelefonePaciente").value;
+
+
+let endereco =
+document.getElementById("cadEnderecoPaciente").value;
+
+
+if(!nome){
+
+alert("Preencha ao menos o nome do paciente.");
+
+return;
+
+}
+
+
+dados.pacientes.push({
+
+nome:nome,
+
+idade:idade,
+
+telefone:telefone,
+
+endereco:endereco
+
+});
+
+
+salvarDados();
+
+
+alert("Paciente cadastrado!");
+
+
+listaPacientes();
+
+
+}
+
+
+function excluirPaciente(index){
+
+
+if(!confirm("Deseja realmente excluir este paciente cadastrado?")){
+
+return;
+
+}
+
+
+dados.pacientes.splice(index,1);
+
+
+salvarDados();
+
+
+listaPacientes();
+
+
+}
+
+
+// =========================
+// AGENDA DE CONSULTAS
+// =========================
+
+
+function agendaCompleta(){
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:25px;
+border-radius:20px;
+margin-top:20px;
+">
+
+
+<h2>
+📅 Agenda de Consultas
+</h2>
+
+
+`;
+
+
+
+if(dados.consultas.length==0){
+
+
+html+=`
+
+<p>
+Nenhuma consulta agendada.
+</p>
+
+`;
+
+
+
+}
+
+
+
+dados.consultas.forEach(c=>{
+
+
+html+=`
+
+
+<div style="
+background:#eef6ff;
+padding:15px;
+border-radius:12px;
+margin:10px 0;
+">
+
+
+<h3>
+👤 ${c.paciente}
+</h3>
+
+
+<p>
+
+👨‍⚕️ Médico:
+${c.medico || "Não informado"}
+
+</p>
+
+
+<p>
+
+📅 Data:
+${c.data || "Não informada"}
+
+</p>
+
+
+<p>
+
+⏰ Hora:
+${c.hora || "Não informada"}
+
+</p>
+
+
+<p>
+
+📌 Status:
+${c.status || "Agendada"}
+
+</p>
+
+
+
+</div>
+
+
+
+`;
+
+
+
+});
+
+
+
+html+=`
+
+</div>
+
+`;
+
+
+
+let area = 
+document.getElementById("conteudoMedico");
+
+
+
+if(area){
+
+area.innerHTML=html;
+
+
+}
+
+
+
+}
+
+// =========================
+// BOTÕES EXTRAS DO MÉDICO
+// =========================
+
+
+function adicionarMenuMedico(){
+
+
+let botoes = `
+
+
+<button onclick="agendaCompleta()">
+
+📅 Agenda Completa
+
+</button>
+
+
+
+<button onclick="verMeusExamesMedico()">
+
+🧪 Ver Exames
+
+</button>
+
+
+
+<button onclick="dashboardMedico()">
+
+📊 Meu Painel
+
+</button>
+
+
+`;
+
+
+
+let conteudo =
+document.getElementById("conteudoMedico");
+
+
+
+if(conteudo){
+
+
+conteudo.innerHTML += botoes;
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+function verMeusExamesMedico(){
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:25px;
+border-radius:20px;
+">
+
+
+<h2>
+🧪 Exames Agendados
+</h2>
+
+
+`;
+
+
+
+if(dados.exames.length==0){
+
+
+html+=`
+
+<p>
+Nenhum exame cadastrado.
+</p>
+
+`;
+
+
+
+}
+
+
+
+dados.exames.forEach((e,index)=>{
+
+
+html+=`
+
+
+<div style="
+background:#eef6ff;
+padding:15px;
+border-radius:12px;
+margin:10px 0;
+">
+
+
+<b>Paciente:</b>
+${e.paciente}
+
+
+<br>
+
+
+<b>Exame:</b>
+${e.tipo}
+
+
+<br>
+
+
+<b>Data:</b>
+${e.data}
+
+
+<br>
+
+
+<b>Local:</b>
+${e.local || "Não informado"}
+
+
+<br>
+
+
+<b>Status:</b>
+${e.status || "Solicitado"}
+
+
+<br><br>
+
+
+<button onclick="detalhesExame(${index})"
+style="background:#54a0ff">
+
+🔎 Detalhes
+
+</button>
+
+
+<button onclick="adicionarLocalExame(${index})"
+style="background:#feca57;color:#222">
+
+📍 Definir Local
+
+</button>
+
+
+<button onclick="atualizarStatusExame(${index},'Concluído')"
+style="background:#1dd1a1">
+
+✅ Marcar Concluído
+
+</button>
+
+
+
+</div>
+
+
+`;
+
+
+
+});
+
+
+
+html+=`
+
+</div>
+
+`;
+
+
+
+let area =
+document.getElementById("conteudoMedico");
+
+
+
+if(area){
+
+area.innerHTML=html;
+
+}
+
+
+
+}
+
+
+// =========================
+// TRANSPORTE AVANÇADO
+// =========================
+
+
+function atualizarStatusTransporte(index,status){
+
+
+
+if(dados.transportes[index]){
+
+
+dados.transportes[index].status=status;
+
+
+salvarDados();
+
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+function assumirCorrida(index){
+
+
+
+let motorista =
+prompt(
+"Digite o nome do motorista:"
+);
+
+
+
+if(motorista){
+
+
+
+dados.transportes[index].motorista=
+motorista;
+
+
+
+dados.transportes[index].status=
+"Motorista a caminho";
+
+
+
+salvarDados();
+
+
+
+alert(
+"Corrida atribuída ao motorista!"
+);
+
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+function detalhesTransporte(index){
+
+
+
+let t =
+dados.transportes[index];
+
+
+
+if(t){
+
+
+alert(
+
+`
+🚐 Transporte
+
+Paciente:
+${t.paciente}
+
+Endereço:
+${t.endereco}
+
+Destino:
+${t.destino}
+
+Motorista:
+${t.motorista || "Não definido"}
+
+Status:
+${t.status || "Aguardando"}
+
+`
+
+);
+
+
+
+}
+
+
+
+}
+
+// =========================
+// MOTORISTA - NOVO PAINEL
+// =========================
+
+
+function painelMotoristaAvancado(){
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:25px;
+border-radius:20px;
+">
+
+
+<h2>
+🚐 Corridas disponíveis
+</h2>
+
+
+
+`;
+
+
+
+if(dados.transportes.length==0){
+
+
+html+=`
+
+<p>
+Nenhuma solicitação de transporte.
+</p>
+
+`;
+
+
+
+}
+
+
+
+dados.transportes.forEach((t,index)=>{
+
+
+html+=`
+
+
+<div style="
+background:#eef6ff;
+padding:15px;
+border-radius:12px;
+margin:15px 0;
+">
+
+
+<h3>
+👤 ${t.paciente}
+</h3>
+
+
+
+<p>
+
+📍 Origem:
+${t.endereco}
+
+</p>
+
+
+
+<p>
+
+🏥 Destino:
+${t.destino}
+
+</p>
+
+
+
+<p>
+
+🚦 Status:
+${t.status || "Aguardando"}
+
+</p>
+
+
+
+<p>
+
+🚐 Motorista:
+${t.motorista || "Nenhum"}
+
+</p>
+
+
+
+
+<button onclick="assumirCorrida(${index})">
+
+✅ Assumir corrida
+
+</button>
+
+
+
+
+<button onclick="detalhesTransporte(${index})">
+
+🔎 Ver detalhes
+
+</button>
+
+
+
+
+<button onclick="atualizarStatusTransporte(${index},'Paciente transportado')">
+
+🚗 Iniciar viagem
+
+</button>
+
+
+
+
+<button onclick="atualizarStatusTransporte(${index},'Finalizado')">
+
+✔ Finalizar
+
+</button>
+
+
+
+
+<button onclick="mostrarRota(${index})"
+style="background:#54a0ff">
+
+🗺️ Ver Rota
+
+</button>
+
+
+
+
+<button onclick="confirmarPacienteTransporte(${index})"
+style="background:#1dd1a1">
+
+👤 Confirmar Paciente
+
+</button>
+
+
+
+
+<button onclick="adicionarHorarioChegada(${index})"
+style="background:#feca57;color:#222">
+
+⏰ Horário de Chegada
+
+</button>
+
+
+
+
+<button onclick="historicoViagem(${index})"
+style="background:#a29bfe">
+
+📖 Histórico da Viagem
+
+</button>
+
+
+
+</div>
+
+
+
+`;
+
+
+
+});
+
+
+
+html+=`
+
+</div>
+
+`;
+
+
+
+let area =
+document.getElementById("conteudoMotorista");
+
+
+
+if(area){
+
+area.innerHTML=html;
+
+}
+
+
+
+}
+
+// =========================
+// ROTA VISUAL TRANSPORTE
+// =========================
+
+
+function mostrarRota(index){
+
+
+let t = dados.transportes[index];
+
+
+if(!t){
+
+return;
+
+}
+
+
+
+let html = `
+
+
+<div style="
+background:white;
+padding:25px;
+border-radius:20px;
+">
+
+
+<h2>
+🗺️ Rota do Transporte
+</h2>
+
+
+
+<div style="
+background:#eef6ff;
+padding:20px;
+border-radius:15px;
+margin-top:20px;
+">
+
+
+
+<h3>
+📍 Origem
+</h3>
+
+
+<p>
+${t.endereco}
+</p>
+
+
+
+<br>
+
+
+⬇️
+
+<br><br>
+
+
+
+<h3>
+🏥 Destino
+</h3>
+
+
+<p>
+${t.destino}
+</p>
+
+
+
+<br>
+
+
+<div style="
+background:#0066ff;
+color:white;
+padding:15px;
+border-radius:15px;
+text-align:center;
+">
+
+
+🚐 Em deslocamento
+
+
+</div>
+
+
+
+</div>
+
+
+</div>
+
+
+
+`;
+
+
+
+let area =
+document.getElementById("conteudoMotorista");
+
+
+
+if(area){
+
+
+area.innerHTML = html;
+
+
+}
+
+
+
+}
+
+// =========================
+// CADASTRO DE USUÁRIOS
+// =========================
+
+
+let usuarios =
+JSON.parse(
+localStorage.getItem("usuarios")
+)
+|| [
+
+{
+usuario:"paciente",
+senha:"123",
+tipo:"paciente"
+},
+
+{
+usuario:"medico",
+senha:"123",
+tipo:"medico"
+},
+
+{
+usuario:"motorista",
+senha:"123",
+tipo:"motorista"
+},
+
+{
+usuario:"admin",
+senha:"admin",
+tipo:"admin"
+}
+
+];
+
+
+
+
+
+function salvarUsuarios(){
+
+
+localStorage.setItem(
+"usuarios",
+JSON.stringify(usuarios)
+);
+
+
+}
+
+
+
+
+
+
+
+
+function cadastrarUsuario(){
+
+
+
+let nome =
+prompt(
+"Digite o usuário:"
+);
+
+
+
+let senha =
+prompt(
+"Digite a senha:"
+);
+
+
+
+let tipo =
+prompt(
+"Digite o tipo: paciente, medico ou motorista"
+);
+
+
+
+if(nome && senha && tipo){
+
+
+
+usuarios.push({
+
+usuario:nome,
+
+senha:senha,
+
+tipo:tipo
+
+
+});
+
+
+
+salvarUsuarios();
+
+
+
+alert(
+"Usuário cadastrado com sucesso!"
+);
+
+
+
+}else{
+
+
+alert(
+"Preencha todos os dados."
+);
+
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+function listarUsuarios(){
+
+
+
+let texto="USUÁRIOS CADASTRADOS:\n\n";
+
+
+
+usuarios.forEach(u=>{
+
+
+texto +=
+
+"Usuário: "
++u.usuario+
+"\nTipo: "
++u.tipo+
+"\n\n";
+
+
+
+});
+
+
+
+alert(texto);
+
+
+
+}
+
+// =========================
+// ADMIN - USUÁRIOS
+// =========================
+
+
+function painelUsuariosAdmin(){
+
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:25px;
+border-radius:20px;
+margin-top:20px;
+">
+
+
+<h2>
+👥 Gerenciamento de Usuários
+</h2>
+
+
+
+<button onclick="cadastrarUsuario()">
+
+➕ Cadastrar Usuário
+
+</button>
+
+
+
+
+<button onclick="listarUsuarios()">
+
+📋 Ver Usuários
+
+</button>
+
+
+
+</div>
+
+
+
+`;
+
+
+
+let area =
+document.getElementById("conteudoAdmin");
+
+
+
+if(area){
+
+
+area.innerHTML = html;
+
+
+}
+
+
+
+}
+
+// =========================
+// PERFIL DO PACIENTE
+// =========================
+
+
+function perfilPaciente(){
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:25px;
+border-radius:20px;
+">
+
+
+<h2>
+👤 Meu Perfil
+</h2>
+
+
+
+<div style="
+background:#eef6ff;
+padding:20px;
+border-radius:15px;
+margin-top:15px;
+">
+
+
+<h3>
+Informações do paciente
+</h3>
+
+
+
+<p>
+🩺 Usuário: Paciente
+</p>
+
+
+<p>
+📅 Consultas marcadas:
+${dados.consultas.length}
+</p>
+
+
+<p>
+🧪 Exames marcados:
+${dados.exames.length}
+</p>
+
+
+<p>
+🚐 Transportes solicitados:
+${dados.transportes.length}
+</p>
+
+
+
+</div>
+
+
+</div>
+
+
+
+`;
+
+
+
+let area =
+document.getElementById("conteudoPaciente");
+
+
+
+if(area){
+
+area.innerHTML = html;
+
+}
+
+
+}
+
+// =========================
+// DASHBOARD DO MÉDICO
+// =========================
+
+
+function dashboardMedico(){
+
+
+let pacientes=[];
+
+
+
+dados.consultas.forEach(c=>{
+
+
+if(
+c.paciente &&
+!pacientes.includes(c.paciente)
+){
+
+
+pacientes.push(c.paciente);
+
+
+}
+
+
+});
+
+
+
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:25px;
+border-radius:20px;
+">
+
+
+<h2>
+👨‍⚕️ Resumo Médico
+</h2>
+
+
+
+
+<div style="
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+gap:15px;
+">
+
+
+
+<div style="
+background:#eef6ff;
+padding:20px;
+border-radius:15px;
+text-align:center;
+">
+
+
+<h2>
+
+${pacientes.length}
+
+</h2>
+
+
+Pacientes
+
+</div>
+
+
+
+
+
+<div style="
+background:#eef6ff;
+padding:20px;
+border-radius:15px;
+text-align:center;
+">
+
+
+<h2>
+
+${dados.consultas.length}
+
+</h2>
+
+
+Consultas
+
+</div>
+
+
+
+
+
+<div style="
+background:#eef6ff;
+padding:20px;
+border-radius:15px;
+text-align:center;
+">
+
+
+<h2>
+
+${dados.exames.length}
+
+</h2>
+
+
+Exames
+
+</div>
+
+
+
+</div>
+
+
+
+<br>
+
+
+<h3>
+📅 Próximas consultas
+</h3>
+
+
+
+`;
+
+
+
+dados.consultas.forEach(c=>{
+
+
+html+=`
+
+
+<div style="
+background:#eef6ff;
+padding:15px;
+border-radius:12px;
+margin:10px 0;
+">
+
+
+<b>
+Paciente:
+</b>
+
+${c.paciente}
+
+
+
+<br>
+
+
+<b>
+Data:
+</b>
+
+${c.data}
+
+
+
+<br>
+
+
+<b>
+Hora:
+</b>
+
+${c.hora}
+
+
+
+</div>
+
+
+`;
+
+
+
+});
+
+
+
+html+=`
+
+</div>
+
+`;
+
+
+
+let area =
+document.getElementById("conteudoMedico");
+
+
+if(area){
+
+area.innerHTML=html;
+
+}
+
+
+
+}
+
+// =========================
+// GRÁFICO ADMINISTRADOR
+// =========================
+
+
+function graficoAdmin(){
+
+
+let consultas =
+dados.consultas.length;
+
+
+let exames =
+dados.exames.length;
+
+
+let transportes =
+dados.transportes.length;
+
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:25px;
+border-radius:20px;
+margin-top:20px;
+">
+
+
+<h2>
+📈 Estatísticas do Sistema
+</h2>
+
+
+
+<p>
+Consultas
+</p>
+
+
+<div style="
+background:#dbeafe;
+height:25px;
+border-radius:20px;
+overflow:hidden;
+">
+
+
+<div style="
+background:#0066ff;
+height:100%;
+width:${consultas*10+5}%;
+border-radius:20px;
+">
+
+</div>
+
+
+</div>
+
+
+
+<br>
+
+
+
+<p>
+Exames
+</p>
+
+
+<div style="
+background:#dbeafe;
+height:25px;
+border-radius:20px;
+overflow:hidden;
+">
+
+
+<div style="
+background:#00a86b;
+height:100%;
+width:${exames*10+5}%;
+border-radius:20px;
+">
+
+</div>
+
+
+</div>
+
+
+
+<br>
+
+
+
+<p>
+Transportes
+</p>
+
+
+<div style="
+background:#dbeafe;
+height:25px;
+border-radius:20px;
+overflow:hidden;
+">
+
+
+<div style="
+background:#ff9800;
+height:100%;
+width:${transportes*10+5}%;
+border-radius:20px;
+">
+
+</div>
+
+
+</div>
+
+
+
+</div>
+
+
+`;
+
+
+
+let area =
+document.getElementById("conteudoAdmin");
+
+
+if(area){
+
+area.innerHTML=html;
+
+
+}
+
+
+
+}
+
+// =========================
+// CONSULTA COMPLETA
+// =========================
+
+
+function adicionarDetalhesConsulta(index){
+
+
+let motivo =
+prompt(
+"Digite o motivo da consulta:"
+);
+
+
+
+let observacao =
+prompt(
+"Digite alguma observação:"
+);
+
+
+
+if(dados.consultas[index]){
+
+
+dados.consultas[index].motivo =
+motivo;
+
+
+dados.consultas[index].observacao =
+observacao;
+
+
+
+salvarDados();
+
+
+
+alert(
+"Informações adicionadas!"
+);
+
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+function verDetalhesConsulta(index){
+
+
+
+let c =
+dados.consultas[index];
+
+
+
+if(c){
+
+
+alert(
+
+`
+📅 Consulta
+
+Paciente:
+${c.paciente}
+
+Médico:
+${c.medico || "Não informado"}
+
+Especialidade:
+${c.especialidade || "Não informada"}
+
+Data:
+${c.data}
+
+Hora:
+${c.hora}
+
+Motivo:
+${c.motivo || "Não informado"}
+
+Observação:
+${c.observacao || "Nenhuma"}
+
+`
+
+);
+
+
+
+}
+
+
+
+}
+
+// =========================
+// EXAMES AVANÇADOS
+// =========================
+
+
+function atualizarStatusExame(index,status){
+
+
+
+if(dados.exames[index]){
+
+
+dados.exames[index].status =
+status;
+
+
+salvarDados();
+
+
+
+alert(
+"Status do exame atualizado!"
+);
+
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+function detalhesExame(index){
+
+
+
+let e =
+dados.exames[index];
+
+
+
+if(e){
+
+
+alert(
+
+`
+🧪 Exame
+
+Paciente:
+${e.paciente}
+
+Tipo:
+${e.tipo}
+
+Data:
+${e.data}
+
+Local:
+${e.local || "Não informado"}
+
+Status:
+${e.status || "Solicitado"}
+
+`
+
+);
+
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+function adicionarLocalExame(index){
+
+
+
+let local =
+prompt(
+"Digite o local do exame:"
+);
+
+
+
+if(local && dados.exames[index]){
+
+
+dados.exames[index].local =
+local;
+
+
+salvarDados();
+
+
+alert(
+"Local adicionado!"
+);
+
+
+
+}
+
+
+
+}
+
+// =========================
+// ACOMPANHAMENTO TRANSPORTE
+// =========================
+
+
+function confirmarPacienteTransporte(index){
+
+
+
+if(dados.transportes[index]){
+
+
+dados.transportes[index].confirmado =
+true;
+
+
+dados.transportes[index].status =
+"Paciente confirmado";
+
+
+
+salvarDados();
+
+
+
+alert(
+"Paciente confirmou o transporte!"
+);
+
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+function adicionarHorarioChegada(index){
+
+
+
+let horario =
+prompt(
+"Digite o horário previsto de chegada:"
+);
+
+
+
+if(horario && dados.transportes[index]){
+
+
+dados.transportes[index].chegada =
+horario;
+
+
+
+salvarDados();
+
+
+
+alert(
+"Horário atualizado!"
+);
+
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+function historicoViagem(index){
+
+
+
+let t =
+dados.transportes[index];
+
+
+
+if(t){
+
+
+alert(
+
+`
+🚐 Histórico da viagem
+
+Paciente:
+${t.paciente}
+
+Origem:
+${t.endereco}
+
+Destino:
+${t.destino}
+
+Motorista:
+${t.motorista || "Não definido"}
+
+Horário chegada:
+${t.chegada || "Não informado"}
+
+Status:
+${t.status || "Aguardando"}
+
+Paciente confirmou:
+${t.confirmado ? "Sim" : "Não"}
+
+`
+
+);
+
+
+
+}
+
+
+
+}
+
+// =========================
+// SOBRE O PROJETO
+// =========================
+
+
+function sobreProjeto(){
+
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:30px;
+border-radius:20px;
+margin:20px;
+">
+
+
+<h1>
+🩺 TeleMed Norte
+</h1>
+
+
+
+<h2>
+Sobre o projeto
+</h2>
+
+
+
+<p>
+
+O TeleMed Norte é um sistema desenvolvido para demonstrar como a tecnologia pode ajudar a diminuir dificuldades de acesso ao atendimento médico em regiões afastadas.
+
+</p>
+
+
+
+<br>
+
+
+
+<h3>
+🎯 Objetivo
+</h3>
+
+
+<p>
+
+Facilitar o agendamento de consultas, exames e transporte de pacientes através de uma plataforma digital organizada.
+
+</p>
+
+
+
+<br>
+
+
+
+<h3>
+💡 Solução proposta
+</h3>
+
+
+<p>
+
+O sistema conecta pacientes, médicos, motoristas e administradores em um único ambiente, permitindo melhor organização dos atendimentos.
+
+</p>
+
+
+
+<br>
+
+
+
+<h3>
+⚙️ Recursos
+</h3>
+
+
+
+<p>
+
+✔ Agendamento de consultas
+
+<br>
+
+✔ Solicitação de exames
+
+<br>
+
+✔ Transporte de pacientes
+
+<br>
+
+✔ Controle administrativo
+
+<br>
+
+✔ Organização dos atendimentos
+
+</p>
+
+
+
+<br>
+
+
+
+<h3>
+🌎 Impacto esperado
+</h3>
+
+
+
+<p>
+
+A tecnologia pode auxiliar comunidades que possuem dificuldades de deslocamento e acesso a profissionais de saúde.
+
+</p>
+
+
+
+</div>
+
+
+`;
+
+
+
+document.getElementById("sistema").innerHTML =
+html;
+
+
+
+}
+
+// =========================
+// APRESENTAÇÃO MOSTRA
+// =========================
+
+
+function apresentacaoMostra(){
+
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:35px;
+border-radius:25px;
+margin:20px;
+text-align:center;
+">
+
+
+<div style="
+font-size:70px;
+">
+
+🩺
+
+</div>
+
+
+
+<h1 style="
+color:#0066ff;
+">
+
+TeleMed Norte
+
+</h1>
+
+
+
+<h2>
+
+Mostra Científica
+
+</h2>
+
+
+
+<p style="
+font-size:18px;
+margin-top:20px;
+">
+
+
+Tecnologia e telemedicina como solução para melhorar o acesso à saúde.
+
+</p>
+
+
+
+<br>
+
+
+
+<div style="
+background:#eef6ff;
+padding:20px;
+border-radius:15px;
+text-align:left;
+">
+
+
+<h3>
+Tema:
+</h3>
+
+
+<p>
+
+Dificuldades de atendimento médico em regiões afastadas e o uso da tecnologia como alternativa.
+
+</p>
+
+
+
+<br>
+
+
+
+<h3>
+Sistema desenvolvido:
+</h3>
+
+
+<p>
+
+Uma plataforma que integra pacientes, médicos, motoristas e administração.
+
+</p>
+
+
+
+</div>
+
+
+
+<br>
+
+
+
+<button onclick="abrirPaciente()">
+
+Entrar no Sistema
+
+</button>
+
+
+
+</div>
+
+
+
+`;
+
+
+
+document.getElementById("sistema").innerHTML =
+html;
+
+
+
+}
+
+
+// =========================
+// PRIORIDADE DE ATENDIMENTO
+// =========================
+
+
+function definirPrioridade(index,nivel){
+
+
+
+if(dados.consultas[index]){
+
+
+dados.consultas[index].prioridade =
+nivel;
+
+
+salvarDados();
+
+
+
+alert(
+"Prioridade atualizada!"
+);
+
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+function listarPrioridades(){
+
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:25px;
+border-radius:20px;
+">
+
+
+<h2>
+📌 Prioridades dos Atendimentos
+</h2>
+
+
+`;
+
+
+
+if(dados.consultas.length==0){
+
+
+html+=`
+
+<p>
+Nenhuma consulta cadastrada.
+</p>
+
+`;
+
+
+
+}
+
+
+
+dados.consultas.forEach((c,index)=>{
+
+
+let cor="#d1fae5";
+
+
+if(c.prioridade=="Alta"){
+
+cor="#fecaca";
+
+}
+
+
+else if(c.prioridade=="Média"){
+
+cor="#fef3c7";
+
+}
+
+
+
+html+=`
+
+
+<div style="
+background:${cor};
+padding:15px;
+border-radius:12px;
+margin:10px 0;
+">
+
+
+<b>
+Paciente:
+</b>
+
+${c.paciente}
+
+
+<br>
+
+
+<b>
+Data:
+</b>
+
+${c.data}
+
+
+<br>
+
+
+<b>
+Prioridade:
+</b>
+
+${c.prioridade || "Normal"}
+
+
+
+<br><br>
+
+
+
+<button onclick="definirPrioridade(${index},'Alta')">
+
+🔴 Alta
+
+</button>
+
+
+
+<button onclick="definirPrioridade(${index},'Média')">
+
+🟡 Média
+
+</button>
+
+
+
+<button onclick="definirPrioridade(${index},'Normal')">
+
+🟢 Normal
+
+</button>
+
+
+
+</div>
+
+
+
+`;
+
+
+
+});
+
+
+
+html+=`
+
+</div>
+
+`;
+
+
+
+let area =
+document.getElementById("conteudoAdmin");
+
+
+
+if(area){
+
+area.innerHTML=html;
+
+
+}
+
+
+
+}
+
+// =========================
+// LOCALIZAÇÃO SIMULADA
+// =========================
+
+
+function mapaSimulado(){
+
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:25px;
+border-radius:20px;
+margin:20px;
+">
+
+
+<h2>
+📍 Localização dos Atendimentos
+</h2>
+
+
+
+<div style="
+background:#eef6ff;
+padding:20px;
+border-radius:15px;
+margin-top:20px;
+">
+
+
+<h3>
+📌 Pacientes
+</h3>
+
+
+<p>
+
+👤 Região Norte - Comunidade atendida
+
+</p>
+
+
+
+<hr>
+
+
+
+<h3>
+🏥 Unidade de Atendimento
+
+</h3>
+
+
+<p>
+
+📍 Centro de Telemedicina
+
+</p>
+
+
+
+<hr>
+
+
+
+<h3>
+🚐 Transporte
+
+</h3>
+
+
+<p>
+
+Veículos disponíveis para levar pacientes até o atendimento.
+
+</p>
+
+
+
+<div style="
+height:120px;
+background:#dbeafe;
+border-radius:15px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:40px;
+margin-top:20px;
+">
+
+
+📍 ➡️ 🚐 ➡️ 🏥
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+`;
+
+
+
+document.getElementById("sistema").innerHTML =
+html;
+
+
+
+}
+
+// =========================
+// RELATÓRIO MOSTRA CIENTÍFICA
+// =========================
+
+
+function relatorioMostra(){
+
+
+
+let totalPacientes =
+contarPacientes();
+
+
+
+let totalAtendimentos =
+dados.consultas.length +
+dados.exames.length +
+dados.transportes.length;
+
+
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:30px;
+border-radius:25px;
+margin:20px;
+">
+
+
+<h1>
+📊 Relatório do Projeto
+</h1>
+
+
+<h2>
+TeleMed Norte
+</h2>
+
+
+
+<div style="
+background:#eef6ff;
+padding:20px;
+border-radius:15px;
+margin-top:20px;
+">
+
+
+<h3>
+👥 Pacientes atendidos
+</h3>
+
+
+<p>
+
+${totalPacientes}
+
+</p>
+
+
+<br>
+
+
+<h3>
+📅 Consultas realizadas
+</h3>
+
+
+<p>
+
+${dados.consultas.length}
+
+</p>
+
+
+
+<br>
+
+
+<h3>
+🧪 Exames solicitados
+</h3>
+
+
+<p>
+
+${dados.exames.length}
+
+</p>
+
+
+
+<br>
+
+
+<h3>
+🚐 Transportes solicitados
+</h3>
+
+
+<p>
+
+${dados.transportes.length}
+
+</p>
+
+
+
+<br>
+
+
+<h3>
+🚨 Solicitações urgentes
+</h3>
+
+
+<p>
+
+${emergencias.length}
+
+</p>
+
+
+
+<br>
+
+
+<h3>
+📈 Total de ações registradas
+</h3>
+
+
+<p>
+
+${totalAtendimentos}
+
+</p>
+
+
+
+</div>
+
+
+
+<br>
+
+
+
+<p>
+
+O sistema demonstra como a tecnologia pode auxiliar na organização dos serviços de saúde, facilitando o contato entre pacientes e profissionais.
+
+</p>
+
+
+
+</div>
+
+
+
+`;
+
+
+
+document.getElementById("sistema").innerHTML =
+html;
+
+
+
+}
+
+// =========================
+// CRÉDITOS DO PROJETO
+// =========================
+
+
+function creditosProjeto(){
+
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:30px;
+border-radius:25px;
+margin:20px;
+text-align:center;
+">
+
+
+<h1>
+🩺 TeleMed Norte
+</h1>
+
+
+
+<h2>
+Equipe do Projeto
+</h2>
+
+
+
+<div style="
+background:#eef6ff;
+padding:20px;
+border-radius:15px;
+text-align:left;
+">
+
+
+<p>
+👨‍🔬 Desenvolvimento:
+</p>
+
+
+<p>
+Equipe da Mostra Científica
+</p>
+
+
+
+<br>
+
+
+
+<p>
+📚 Tema:
+</p>
+
+
+<p>
+Telemedicina como solução para dificuldades de acesso à saúde.
+</p>
+
+
+
+<br>
+
+
+
+<p>
+💻 Tecnologia utilizada:
+</p>
+
+
+<p>
+HTML, CSS e JavaScript.
+</p>
+
+
+
+</div>
+
+
+
+<br>
+
+
+
+<button onclick="inicioSistema()">
+
+⬅ Voltar ao início
+
+</button>
+
+
+
+</div>
+
+
+
+`;
+
+
+
+document.getElementById("sistema").innerHTML =
+html;
+
+
+
+}
+
+
+
+
+
+
+
+
+function inicioSistema(){
+
+
+
+document.getElementById("sistema").innerHTML=`
+
+<div style="
+background:white;
+padding:35px;
+border-radius:25px;
+text-align:center;
+margin:20px;
+">
+
+
+<h1>
+🩺 TeleMed Norte
+</h1>
+
+
+<p>
+
+Sistema de telemedicina
+
+</p>
+
+
+
+<button onclick="abrirPaciente()">
+
+Entrar
+
+</button>
+
+
+
+</div>
+
+`;
+
+
+
+}
+
+// =========================
+// INICIALIZAÇÃO DO SISTEMA
+// =========================
+
+
+function iniciarSistema(){
+
+
+
+if(!dados.consultas){
+
+dados.consultas=[];
+
+}
+
+
+
+if(!dados.exames){
+
+dados.exames=[];
+
+}
+
+
+
+if(!dados.transportes){
+
+dados.transportes=[];
+
+}
+
+
+
+salvarDados();
+
+
+
+}
+
+
+
+
+// Executa ao carregar
+
+iniciarSistema();
+
+// =========================
+// MENU DE DEMONSTRAÇÃO
+// =========================
+
+
+function menuDemonstracao(){
+
+
+document.getElementById("login").style.display="none";
+
+document.getElementById("sistema").style.display="block";
+
+
+let html=`
+
+
+<div style="
+background:white;
+padding:30px;
+border-radius:25px;
+margin:20px;
+text-align:center;
+">
+
+
+<h1>
+🩺 TeleMed Norte
+</h1>
+
+
+<h2>
+Demonstração do Sistema
+</h2>
+
+
+
+<p>
+
+Escolha uma área para apresentar:
+
+</p>
+
+
+
+<br>
+
+
+
+<button onclick="abrirPaciente()">
+
+👤 Paciente
+
+</button>
+
+
+
+<button onclick="abrirMedico()">
+
+👨‍⚕️ Médico
+
+</button>
+
+
+
+<button onclick="abrirMotorista()">
+
+🚐 Motorista
+
+</button>
+
+
+
+<button onclick="abrirAdmin()">
+
+📊 Administrador
+
+</button>
+
+
+
+<br><br>
+
+
+
+<button onclick="sobreProjeto()">
+
+💡 Sobre o Projeto
+
+</button>
+
+
+
+<button onclick="relatorioMostra()">
+
+📈 Relatório
+
+</button>
+
+
+
+<button onclick="creditosProjeto()">
+
+👥 Créditos
+
+</button>
+
+
+
+</div>
+
+
+
+`;
+
+
+
+document.getElementById("sistema").innerHTML =
+html;
+
+
+
+}
+
+// =========================
+// PROTEÇÃO DE DADOS
+// =========================
+
+
+function verificarSistema(){
+
+
+
+if(typeof dados === "undefined"){
+
+
+dados={
+
+consultas:[],
+
+exames:[],
+
+transportes:[]
+
+};
+
+
+}
+
+
+
+if(!dados.consultas){
+
+dados.consultas=[];
+
+}
+
+
+
+if(!dados.exames){
+
+dados.exames=[];
+
+}
+
+
+
+if(!dados.transportes){
+
+dados.transportes=[];
+
+}
+
+
+
+if(typeof emergencias === "undefined"){
+
+
+emergencias=[];
+
+
+}
+
+
+
+salvarDados();
+
+
+
+}
+
+
+
+verificarSistema();
+
+
+</script>
+
+
+
+</body>
+
+</html>
